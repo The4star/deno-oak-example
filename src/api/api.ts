@@ -1,7 +1,7 @@
 import { Router } from '../dependencies.ts';
 import { log } from '../dependencies.ts';
 import { loadPlanetsData } from "../models/planets.ts";
-import { downloadLaunchData, addLaunch } from "../models/launches.ts";
+import { downloadLaunchData, addLaunch, abortLaunch } from "../models/launches.ts";
 
 const router = new Router();
 const baseEndpoint = "/api"
@@ -25,10 +25,27 @@ router.get(`${baseEndpoint}/launches`, async ctx => {
 })
 
 router.post(`${baseEndpoint}/launches`, async ctx => {
-  const body =  await ctx.request.body({type: "json"}).value;
-  addLaunch(body)
-  ctx.response.body = {success: true}
-  ctx.response.status = 201
+  try {
+    const body =  await ctx.request.body({type: "json"}).value;
+    addLaunch(body)
+    ctx.response.body = {success: true}
+    ctx.response.status = 201
+  } catch (error) {
+    log.error(error)
+  }
+})
+
+router.delete(`${baseEndpoint}/launches/:id`, ctx => {
+  try {
+    const id = ctx.params?.id;
+  
+    if (id) {
+      const result = abortLaunch(Number(id))
+      ctx.response.body = { success: result !== undefined}
+    }
+  } catch (error) {
+    log.error(error)
+  }
 })
 
 router.post

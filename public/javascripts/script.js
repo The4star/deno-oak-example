@@ -17,7 +17,7 @@ function initValues() {
 async function loadLaunches() {
   const response = await fetch("/api/launches")
   const fetchedLaunches = await response.json()
-  return launches = fetchedLaunches.sort((a, b) => a.flightNumber < b.flightNumber)
+  launches = fetchedLaunches.sort((a, b) => a.flightNumber < b.flightNumber)
 }
 
 async function loadPlanets() {
@@ -29,9 +29,12 @@ async function loadPlanets() {
   });
 }
 
-function abortLaunch() {
-  // TODO: Once API is ready.
-  // Delete launch and reload launches.
+function abortLaunch(id) {
+  return fetch(`/api/launches/${id}`, {
+    method: "DELETE"
+  })
+  .then(loadLaunches)
+  .then(listUpcoming)
 }
 
 async function submitLaunch() {
@@ -55,6 +58,7 @@ async function submitLaunch() {
   })
 
   document.getElementById("launch-success").hidden = false;
+  await loadLaunches()
 }
 
 function listUpcoming() {

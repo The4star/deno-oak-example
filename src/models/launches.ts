@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 
-let allOnlineLaunchData: Launch[] = []
-let allLocalLaunchData: Launch[] = []
+let allLaunchData: Launch[] = []
+
 
 const formatLaunchData = (launchData: any) => {
   const launches: Launch[] = []
@@ -30,19 +30,35 @@ const downloadLaunchData = async (): Promise<Launch[]> => {
   })
 
   const launchData = await response.json()  
-  allOnlineLaunchData = formatLaunchData(launchData)
-  return [...allOnlineLaunchData, ...allLocalLaunchData]
+  const formattedLaunchData = formatLaunchData(launchData)
+  formattedLaunchData.forEach(fl => {
+    const alreadyDownloaded = allLaunchData.some(op => op.flightNumber === fl.flightNumber)    
+    if (!alreadyDownloaded) {
+      allLaunchData.push(fl)
+    }
+  })
+  return allLaunchData
 }
 
 const addLaunch = (data: Launch) => {
-  allLocalLaunchData.push({
+  allLaunchData.push({
     ...data,
     upcoming: true,
     customers: ["4star Enterprises", "Nasa"]
   })
 }
 
+const abortLaunch = (id: number): Launch | undefined => {
+  const launchToAbort = allLaunchData.find(launch => launch.flightNumber === id)
+  if (launchToAbort) {
+    launchToAbort.success = false
+    launchToAbort.upcoming = false
+  }
+  return launchToAbort
+}
+
 export {
   downloadLaunchData,
-  addLaunch
+  addLaunch,
+  abortLaunch
 }
