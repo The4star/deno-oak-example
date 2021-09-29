@@ -1,4 +1,4 @@
-import { join, BufReader, parse, _ } from '../dependencies.ts'
+import { join, BufReader, parse, _ } from '../deps.ts'
 import { Planet } from '../types.d.ts'
 
 export const filterHabitablePlanets = ((planets: Planet[]) => {

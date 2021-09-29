@@ -1,5 +1,4 @@
-import { Router } from '../dependencies.ts';
-import { log } from '../dependencies.ts';
+import { Router, log } from '../deps.ts';
 import { loadPlanetsData } from "../models/planets.ts";
 import { downloadLaunchData, addLaunch, abortLaunch } from "../models/launches.ts";
 

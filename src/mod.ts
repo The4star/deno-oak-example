@@ -1,4 +1,4 @@
-import { Application, send, log } from "./dependencies.ts";
+import { Application, send, log } from "./deps.ts";
 import { setupLogger } from './config/logger.ts'
 import api from './api/api.ts'
 

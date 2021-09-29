@@ -1,4 +1,4 @@
-import { assertEquals } from "../dependencies.ts";
+import { assertEquals } from "../deps.ts";
 import {filterHabitablePlanets} from './planets.ts'
 
 interface planetTest {

@@ -1,4 +1,4 @@
-import { log } from '../dependencies.ts'
+import { log } from '../deps.ts'
 
 const setupLogger = async () => {
   const dateTime = new Date()
