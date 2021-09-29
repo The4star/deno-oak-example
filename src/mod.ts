@@ -1,14 +1,35 @@
-import { Application, send } from "./dependencies.ts";
+import { Application, send, log } from "./dependencies.ts";
+import { setupLogger } from './config/logger.ts'
 import api from './api/api.ts'
 
 const app = new Application();
 const port = 3000;
 
+await setupLogger()
+
+//Errors
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    ctx.response.body = "Internal server error";
+    throw err;
+  }
+});
+
+app.addEventListener("error", (evt) => {
+  const fileHandler = log.getLogger().handlers[1] as any;
+  log.error(evt.error.message)
+  fileHandler.flush()
+});
+
+// rout logging
 app.use(async (ctx, next) => {
   await next()
   const time = ctx.response.headers.get("X-Response-Time")
-  console.log(ctx.request.method, ctx.request.url.pathname, time);
+  log.info(`${ctx.request.method} - ${ctx.request.url.pathname} - ${time}`);
 })
+
 
 app.use(async(ctx,next) => {
   const start = Date.now()
@@ -40,4 +61,4 @@ app.use(async ctx => {
 app.listen({
   port
 })
-console.log(`Listening on port ${port}`);
+log.info(`Listening on port ${port}`);

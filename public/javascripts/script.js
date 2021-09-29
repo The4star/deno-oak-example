@@ -1,4 +1,4 @@
-let launches = [];
+const launches = [];
 
 const numberHeading = "No.".padStart(5);
 const dateHeading = "Date".padEnd(15);
@@ -19,12 +19,15 @@ function loadLaunches() {
   // Load launches and sort by flight number.
 }
 
-function loadPlanets() {
+async function loadPlanets() {
+  const response = await fetch("/planets")
+  const planets = await response.json()
+  console.log(planets);
   // TODO: Once API is ready.
-  // const planetSelector = document.getElementById("planets-selector");
-  // planets.forEach((planet) => {
-  //   planetSelector.innerHTML += `<option value="${planet.kepler_name}">${planet.kepler_name}</option>`;
-  // });
+  const planetSelector = document.getElementById("planets-selector");
+  planets.forEach((planet) => {
+    planetSelector.innerHTML += `<option value="${planet.kepler_name}">${planet.kepler_name}</option>`;
+  });
 }
 
 function abortLaunch() {

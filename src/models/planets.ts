@@ -1,17 +1,8 @@
 import { join, BufReader, parse, _ } from '../dependencies.ts'
 import { Planet } from '../types.d.ts'
 
-const loadPlanetsData = async () => {
-  const path = join("data", "kepler_exoplanets_nasa.csv")
-  const file = await Deno.open(path)
-  const bufreader = new BufReader(file)
-  const result = await parse(bufreader, {
-    comment: "#",
-    skipFirstRow: true
-  }) as Planet[]
-  Deno.close(file.rid)
-
-  const planets = result.filter((planet: Planet) => {
+export const filterHabitablePlanets = ((planets: Planet[]) => {
+  return planets.filter((planet: Planet) => {
     const planetaryRadius = Number(planet["koi_prad"]);
     const stellarMass = Number(planet["koi_smass"]);
     const stellarRadius = Number(planet["koi_srad"])
@@ -21,6 +12,7 @@ const loadPlanetsData = async () => {
     && stellarRadius > 0.99 && stellarRadius < 1.01;
   }).map((planet: Planet) => {
     return _.pick(planet, [
+      "kepler_name",
       "koi_prad",
       "koi_smass",
       "koi_srad",
@@ -28,7 +20,28 @@ const loadPlanetsData = async () => {
       "koi_count",
       "koi_steff"
     ])
-  })
+  }) 
+})
 
-  return planets 
+const loadPlanetsData = async (): Promise<Planet[]> => {  
+  try {
+    const path = join("src/data", "kepler_exoplanets_nasa.csv")
+    const file = await Deno.open(path)
+    const bufreader = new BufReader(file)
+    const result = await parse(bufreader, {
+      comment: "#",
+      skipFirstRow: true
+    }) as Planet[]
+    Deno.close(file.rid)
+    console.log(result[0]);
+    
+    const planetData = filterHabitablePlanets(result)   
+    return planetData 
+  } catch (error) {    
+    throw new Error("Error getting planets data", error);
+  }
+}
+
+export {
+  loadPlanetsData
 }
