@@ -1,4 +1,4 @@
-const launches = [];
+let launches = [];
 
 const numberHeading = "No.".padStart(5);
 const dateHeading = "Date".padEnd(15);
@@ -14,18 +14,17 @@ function initValues() {
   launchDaySelector.setAttribute("value", today);
 }
 
-function loadLaunches() {
-  // TODO: Once API is ready.
-  // Load launches and sort by flight number.
+async function loadLaunches() {
+  const response = await fetch("/api/launches")
+  const fetchedLaunches = await response.json()
+  return launches = fetchedLaunches.sort((a, b) => a.flightNumber < b.flightNumber)
 }
 
 async function loadPlanets() {
-  const response = await fetch("/planets")
+  const response = await fetch("/api/planets")
   const planets = await response.json()
-  console.log(planets);
-  // TODO: Once API is ready.
   const planetSelector = document.getElementById("planets-selector");
-  planets.forEach((planet) => {
+  return planets.forEach((planet) => {
     planetSelector.innerHTML += `<option value="${planet.kepler_name}">${planet.kepler_name}</option>`;
   });
 }
@@ -35,27 +34,26 @@ function abortLaunch() {
   // Delete launch and reload launches.
 }
 
-function submitLaunch() {
+async function submitLaunch() {
   const target = document.getElementById("planets-selector").value;
   const launchDate = new Date(document.getElementById("launch-day").value);
   const mission = document.getElementById("mission-name").value;
   const rocket = document.getElementById("rocket-name").value;
   const flightNumber = launches[launches.length - 1]?.flightNumber + 1 || 1;
 
-  // TODO: Once API is ready.
-  // Submit above data to launch system and reload launches.
-  const customers = [ "NASA", "ZTM" ];
   const launchToSubmit = {
     target,
-    launchDate: launchDate / 1000,
+    launchDate: Math.floor(launchDate / 1000),
     mission,
     rocket,
-    flightNumber,
-    customers,
-    upcoming: true,
+    flightNumber
   }
 
-  launches.push(launchToSubmit)
+  await fetch("/api/launches", {
+    method: "POST",
+    body: JSON.stringify(launchToSubmit)
+  })
+
   document.getElementById("launch-success").hidden = false;
 }
 
@@ -90,7 +88,7 @@ function listHistory() {
     });
 }
 
-function navigate(navigateTo) {
+async function navigate(navigateTo) {
   const pages = ["history", "upcoming", "launch"];
   document.getElementById(navigateTo).hidden = false;
   pages.filter((page) => page !== navigateTo).forEach((page) => {
@@ -99,11 +97,11 @@ function navigate(navigateTo) {
   document.getElementById("launch-success").hidden = true;
 
   if (navigateTo === "upcoming") {
-    loadLaunches();
+    await loadLaunches();
     listUpcoming();
   } else if (navigateTo === "history") {
-    loadLaunches();
-    listHistory();
+     await loadLaunches();
+     listHistory();
   }
 }
 

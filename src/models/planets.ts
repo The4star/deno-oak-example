@@ -33,7 +33,6 @@ const loadPlanetsData = async (): Promise<Planet[]> => {
       skipFirstRow: true
     }) as Planet[]
     Deno.close(file.rid)
-    console.log(result[0]);
     
     const planetData = filterHabitablePlanets(result)   
     return planetData 

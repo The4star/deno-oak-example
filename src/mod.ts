@@ -8,22 +8,19 @@ const port = 3000;
 await setupLogger()
 
 //Errors
-app.use(async (ctx, next) => {
+app.addEventListener("error", (evt) => {
+  log.error(evt.error.message)
+});
+
+app.use(async (_ctx, next) => {
   try {
     await next();
   } catch (err) {
-    ctx.response.body = "Internal server error";
     throw err;
   }
 });
 
-app.addEventListener("error", (evt) => {
-  const fileHandler = log.getLogger().handlers[1] as any;
-  log.error(evt.error.message)
-  fileHandler.flush()
-});
-
-// rout logging
+// route logging
 app.use(async (ctx, next) => {
   await next()
   const time = ctx.response.headers.get("X-Response-Time")
@@ -38,6 +35,7 @@ app.use(async(ctx,next) => {
   ctx.response.headers.set('X-Response-Time', `${end}ms`)
 })
 
+//routes
 app.use(api.routes())
 app.use(api.allowedMethods())
 
