@@ -9,5 +9,3 @@ export { parse } from 'https://deno.land/std@0.109.0/encoding/csv.ts'
 export * as _ from "https://deno.land/x/lodash@4.17.15-es/lodash.js"
 
 export * as log from "https://deno.land/std@0.109.0/log/mod.ts"
-
-export { assertEquals } from "https://deno.land/std@0.109.0/testing/asserts.ts"
