@@ -1,5 +1,7 @@
 import { Application, send, log } from "./deps.ts";
 import { setupLogger } from './config/logger.ts'
+
+import pages from './routes/pages.ts'
 import api from './api/api.ts'
 
 const app = new Application();
@@ -36,6 +38,8 @@ app.use(async(ctx,next) => {
 })
 
 //routes
+app.use(pages.routes())
+app.use(pages.allowedMethods())
 app.use(api.routes())
 app.use(api.allowedMethods())
 

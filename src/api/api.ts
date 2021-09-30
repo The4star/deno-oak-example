@@ -47,6 +47,4 @@ router.delete(`${baseEndpoint}/launches/:id`, ctx => {
   }
 })
 
-router.post
-
 export default router;
